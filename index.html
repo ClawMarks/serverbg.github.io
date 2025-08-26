@@ -3,54 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>弹性布局背景页</title>
-    <!-- 引入Tailwind CSS -->
+    <title>无序之城RP</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <style type="text/tailwindcss">
-        @layer utilities {
-            .content-auto {
-                content-visibility: auto;
-            }
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        /* 确保页面占满整个视口高度 */
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+        
+        /* 音乐控制按钮样式 */
+        .music-control {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .music-control:hover {
+            transform: scale(1.1);
+            background-color: rgba(0, 0, 0, 0.9);
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col m-0 p-0">
-    <!-- 隐藏的音乐播放器 - 自动播放且无控制功能 -->
-    <audio id="backgroundMusic" autoplay loop class="hidden">
-        <!-- 这里使用示例音乐链接，实际使用时请替换为您自己的音乐文件 -->
-        <source src="https://i.y.qq.com/v8/playsong.html?songid=573889032#webchat_redirect" type="audio/mpeg">
+<body class="flex flex-col min-h-screen">
+    <!-- 主背景 - 使用fixed定位并让其自适应窗口大小 -->
+    <div class="fixed inset-0 z-0">
+        <img src="https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/007b7a6f36e14e82bb337360e8e391bc.png~tplv-a9rns2rl98-24:720:720.png?rk3s=1fb89129&x-expires=1756803354&x-signature=4DWobRXilWBI3Wmvp4EyHApnW8c%3D" 
+             alt="无序之城RP背景图" 
+             class="w-full h-full object-cover">
+    </div>
+
+    <!-- 主要内容区域 - 弹性布局 -->
+    <main class="flex-grow z-10 relative">
+        <!-- 这里可以添加您的主要内容 -->
+    </main>
+
+    <!-- 音频元素 - 默认隐藏 -->
+    <audio id="audioPlayer" loop autoplay>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
         您的浏览器不支持音频播放
     </audio>
 
-    <!-- 主容器 - 弹性布局，仅包含背景图 -->
-    <div class="flex-1 relative overflow-hidden">
-        <!-- 背景图 - 占据整个屏幕 -->
-        <div class="absolute inset-0 z-0">
-            <img src="https://github.com/ClawMarks/serverbg.github.io/blob/main/background.png"
-                 class="w-full h-full object-cover">
-        </div>
+    <!-- 音乐控制按钮 -->
+    <div class="music-control" id="musicControl">
+        <i class="fa fa-pause"></i>
     </div>
 
     <script>
-        // 音乐播放逻辑 - 尝试自动播放
-        document.addEventListener('DOMContentLoaded', function() {
-            const audio = document.getElementById('backgroundMusic');
-            
-            // 尝试播放音乐，处理浏览器自动播放限制
-            function tryPlayAudio() {
-                audio.play().catch(error => {
-                    console.log('自动播放需要用户交互:', error);
-                    // 监听首次用户交互后再尝试播放
-                    document.body.addEventListener('click', () => {
-                        audio.play();
-                    }, { once: true });
+        // 音乐播放控制
+        const audioPlayer = document.getElementById('audioPlayer');
+        const musicControl = document.getElementById('musicControl');
+        const controlIcon = musicControl.querySelector('i');
+        
+        // 控制播放/暂停
+        musicControl.addEventListener('click', () => {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                controlIcon.classList.remove('fa-play');
+                controlIcon.classList.add('fa-pause');
+            } else {
+                audioPlayer.pause();
+                controlIcon.classList.remove('fa-pause');
+                controlIcon.classList.add('fa-play');
+            }
+        });
+        
+        // 尝试自动播放（部分浏览器可能会阻止）
+        window.addEventListener('load', () => {
+            // 有些浏览器需要用户交互后才能播放音频
+            // 这里添加一个用户交互事件监听器来处理这种情况
+            document.addEventListener('click', enableAudioOnInteraction, { once: true });
+        });
+        
+        // 用户交互后启用音频播放
+        function enableAudioOnInteraction() {
+            if (audioPlayer.paused) {
+                audioPlayer.play().catch(e => {
+                    console.log('音频播放需要用户交互:', e);
                 });
             }
-            
-            // 初始尝试播放
-            tryPlayAudio();
-        });
+        }
     </script>
 </body>
 </html>
